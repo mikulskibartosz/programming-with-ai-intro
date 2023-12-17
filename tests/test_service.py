@@ -1,3 +1,4 @@
+import pytest
 from rest.service import Service
 
 def test_create_user():
@@ -7,6 +8,16 @@ def test_create_user():
     service.create(name, email)
 
     assert service.users[name] == email
+
+
+def test_create_user_already_exists():
+    service = Service()
+    name = "John Doe"
+    email = "john.doe@example.com"
+    service.create(name, email)
+
+    with pytest.raises(Exception):
+        service.create(name, email)
 
 
 def test_get_all_users():
@@ -55,6 +66,18 @@ def test_update_user_email():
     service.update_email(name, new_email)
 
     assert service.users[name] == new_email
+
+def test_update_user_email_user_does_not_exist():
+    service = Service()
+    name = "John Doe"
+    email = "john.doe@example.com"
+    service.create(name, email)
+
+    new_name = "Jane Smith"
+    new_email = "jane.smith@example.com"
+    with pytest.raises(Exception):
+        service.update_email(new_name, new_email)
+
 
 def test_delete_user_by_name():
     service = Service()
