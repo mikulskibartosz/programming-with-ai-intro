@@ -45,3 +45,24 @@ def test_get_user_by_name_user_does_not_exist():
     assert user_does_not_exist is None
 
 
+def test_update_user_email():
+    service = Service()
+    name = "John Doe"
+    email = "john.doe@example.com"
+    service.create(name, email)
+
+    new_email = "john.doe.new@example.com"
+    service.update_email(name, new_email)
+
+    assert service.users[name] == new_email
+
+def test_delete_user_by_name():
+    service = Service()
+    name = "John Doe"
+    email = "john.doe@example.com"
+    service.create(name, email)
+
+    service.delete_user_by_name(name)
+
+    assert name not in service.users
+
