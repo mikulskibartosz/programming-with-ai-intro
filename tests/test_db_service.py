@@ -5,14 +5,15 @@ from rest.db_service import DbService
 def db_service():
     service = DbService()
     service.clear_table()
-    return service
+    yield service
+    service.close()
 
 def test_create_user(db_service):
     name = "John Doe"
     email = "john.doe@example.com"
     db_service.create(name, email)
 
-    assert db_service.users[name] == email
+    assert (name, email) in db_service.get_all_users()
 
 
 def test_create_user_already_exists(db_service):
@@ -65,7 +66,8 @@ def test_update_user_email(db_service):
     new_email = "john.doe.new@example.com"
     db_service.update_email(name, new_email)
 
-    assert db_service.users[name] == new_email
+    all_users = db_service.get_all_users()
+    assert (name, new_email) in all_users
 
 def test_update_user_email_user_does_not_exist(db_service):
     name = "John Doe"
@@ -85,5 +87,7 @@ def test_delete_user_by_name(db_service):
 
     db_service.delete_user_by_name(name)
 
-    assert name not in db_service.users
+    all_users = db_service.get_all_users()
+    assert len(all_users) == 0
+
 
