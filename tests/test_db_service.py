@@ -91,3 +91,18 @@ def test_delete_user_by_name(db_service):
     assert len(all_users) == 0
 
 
+def test_create_user_rejects_invalid_email(db_service):
+    name = "John Doe"
+    invalid_email = "john.doe@example"
+    with pytest.raises(Exception):
+        db_service.create(name, invalid_email)
+
+
+def test_update_user_rejects_invalid_email(db_service):
+    name = "John Doe"
+    email = "john.doe@example.com"
+    db_service.create(name, email)
+
+    invalid_email = "john.doe@example"
+    with pytest.raises(Exception):
+        db_service.update_email(name, invalid_email)

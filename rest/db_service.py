@@ -1,3 +1,4 @@
+import re
 import sqlite3
 
 
@@ -26,6 +27,8 @@ class DbService:
         self.conn.close()
 
     def create(self, name, email):
+        if not self.is_valid_email(email):
+            raise Exception("Invalid email: " + email)
         try:
             self.cursor.execute('''
                 INSERT INTO users (name, email)
@@ -60,6 +63,8 @@ class DbService:
             raise Exception("Error getting user by name: " + str(e))
 
     def update_email(self, name, new_email):
+        if not self.is_valid_email(new_email):
+            raise Exception("Invalid email: " + new_email)
         try:
             self.cursor.execute('''
                 SELECT name
@@ -87,3 +92,7 @@ class DbService:
             self.conn.commit()
         except Exception as e:
             raise Exception("Error deleting user by name: " + str(e))
+
+    def is_valid_email(self, email):
+        pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+        return re.match(pattern, email) is not None
